@@ -1,0 +1,44 @@
+[
+  {
+    "nombre": "Fernando",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": false
+  },
+  {
+    "nombre": "Fernando",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": false
+  },
+  {
+    "nombre": "prueba",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": true
+  },
+  {
+    "nombre": "prueba2",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": false
+  },
+  {
+    "nombre": "Fernando5",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": false
+  },
+  {
+    "nombre": "Jose",
+    "score": 0,
+    "nivel1": true,
+    "nivel2": false
+  },
+  {
+    "nombre": "Menus",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": false
+  }
+]
