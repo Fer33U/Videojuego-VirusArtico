@@ -43,7 +43,9 @@ public class CreatePlayer : MonoBehaviour
             nombre = playerName,
             score = 0,
             nivel1 = false,
-            nivel2 = false
+            nivel2 = false,
+            personajeAsset = "",  // Asignar una cadena vacía para el personajeAsset
+            vidajugador = 0      // Inicializar vidajugador con 0 (vacío numérico)
         };
 
         // Agregar el nuevo jugador a la lista
@@ -125,4 +127,6 @@ public class Player
     public int score;
     public bool nivel1;
     public bool nivel2;
+    public string personajeAsset; // Nuevo campo para el asset del personaje
+    public int vidajugador; // Nuevo campo para la vida del jugador
 }
