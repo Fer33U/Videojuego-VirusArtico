@@ -11,7 +11,8 @@ public class CreatePlayer : MonoBehaviour
     public TMP_InputField playerNameInput; // Cambiado a TMP_InputField
     public Button submitButton;       // Asigna el botón desde el inspector
 
-    private const string FilePath = "Assets/Data/players.json"; // Ruta del archivo único
+    private const string PlayersFilePath = "Assets/Data/players.json"; // Ruta del archivo de jugadores
+    private const string CurrentPlayerFilePath = "Assets/Data/JugadorActual.json"; // Ruta del archivo del jugador actual
     private List<Player> playersList = new List<Player>();
     private const int MaxPlayers = 15;
 
@@ -40,12 +41,13 @@ public class CreatePlayer : MonoBehaviour
         // Crear el nuevo jugador
         Player newPlayer = new Player
         {
+            id = System.Guid.NewGuid().ToString(), // Generar un ID único
             nombre = playerName,
             score = 0,
             nivel1 = false,
             nivel2 = false,
             personajeAsset = "",  // Asignar una cadena vacía para el personajeAsset
-            vidajugador = 0      // Inicializar vidajugador con 0 (vacío numérico)
+            vidajugador = 0       // Inicializar vidajugador con 0 (vacío numérico)
         };
 
         // Agregar el nuevo jugador a la lista
@@ -60,8 +62,9 @@ public class CreatePlayer : MonoBehaviour
         // Guardar datos actualizados
         SavePlayers();
 
-        // Establecer el jugador actual
+        // Establecer el jugador actual y guardarlo
         currentPlayer = newPlayer;
+        SaveCurrentPlayer();
 
         Debug.Log($"Jugador {playerName} creado y guardado.");
 
@@ -71,12 +74,12 @@ public class CreatePlayer : MonoBehaviour
 
     void LoadPlayers()
     {
-        if (File.Exists(FilePath))
+        if (File.Exists(PlayersFilePath))
         {
             try
             {
                 // Leer y deserializar el archivo JSON
-                string json = File.ReadAllText(FilePath);
+                string json = File.ReadAllText(PlayersFilePath);
                 playersList = JsonConvert.DeserializeObject<List<Player>>(json) ?? new List<Player>();
 
                 Debug.Log("Datos cargados correctamente.");
@@ -96,20 +99,45 @@ public class CreatePlayer : MonoBehaviour
             string json = JsonConvert.SerializeObject(playersList, Formatting.Indented);
 
             // Crear la carpeta si no existe
-            string directoryPath = Path.GetDirectoryName(FilePath);
+            string directoryPath = Path.GetDirectoryName(PlayersFilePath);
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
             }
 
             // Guardar en el archivo
-            File.WriteAllText(FilePath, json);
+            File.WriteAllText(PlayersFilePath, json);
 
             Debug.Log("Datos guardados correctamente.");
         }
         catch (System.Exception ex)
         {
             Debug.LogError("Error al guardar los datos en el archivo JSON: " + ex.Message);
+        }
+    }
+
+    void SaveCurrentPlayer()
+    {
+        try
+        {
+            // Serializar el jugador actual a JSON
+            string json = JsonConvert.SerializeObject(currentPlayer, Formatting.Indented);
+
+            // Crear la carpeta si no existe
+            string directoryPath = Path.GetDirectoryName(CurrentPlayerFilePath);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            // Guardar en el archivo
+            File.WriteAllText(CurrentPlayerFilePath, json);
+
+            Debug.Log("Jugador actual guardado correctamente.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("Error al guardar el jugador actual en el archivo JSON: " + ex.Message);
         }
     }
 
@@ -123,6 +151,7 @@ public class CreatePlayer : MonoBehaviour
 [System.Serializable]
 public class Player
 {
+    public string id;  // Nuevo campo para el ID único del jugador
     public string nombre;
     public int score;
     public bool nivel1;

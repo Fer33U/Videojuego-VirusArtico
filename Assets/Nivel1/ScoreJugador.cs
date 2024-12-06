@@ -7,7 +7,8 @@ public class ScoreJugador : MonoBehaviour
 {
     private Player currentPlayer; // Jugador actual
     public TMP_Text TextScore;    // Referencia al componente TextMesh Pro para mostrar el score
-    private string dataPath = "Assets/Data/players.json"; // Ruta al archivo JSON
+    private string dataPathPlayers = "Assets/Data/players.json"; // Ruta al archivo JSON de players
+    private string dataPathJugadorActual = "Assets/Data/JugadorActual.json"; // Ruta al archivo JSON de JugadorActual
 
     void Start()
     {
@@ -30,20 +31,14 @@ public class ScoreJugador : MonoBehaviour
     // Método para cargar los datos del jugador actual
     private void LoadCurrentPlayer()
     {
-        if (File.Exists(dataPath))
+        if (File.Exists(dataPathJugadorActual))
         {
-            string json = File.ReadAllText(dataPath);
-            var players = JsonConvert.DeserializeObject<Player[]>(json);
-
-            // Buscar al jugador actual (por ejemplo, el que está en nivel1)
-            if (players != null)
-            {
-                currentPlayer = System.Array.Find(players, player => player.nivel1);
-            }
+            string json = File.ReadAllText(dataPathJugadorActual);
+            currentPlayer = JsonConvert.DeserializeObject<Player>(json);
         }
         else
         {
-            Debug.LogError($"El archivo JSON no existe en la ruta: {dataPath}");
+            Debug.LogError($"El archivo JSON no existe en la ruta: {dataPathJugadorActual}");
         }
     }
 
@@ -55,7 +50,7 @@ public class ScoreJugador : MonoBehaviour
             int score = currentPlayer.score;
 
             // Formatear el score para que tenga 3 dígitos (Ejemplo: 000, 080, 999)
-            TextScore.text = "Score: " + score.ToString("000"); 
+            TextScore.text = "Score: " + score.ToString("000");
         }
     }
 }

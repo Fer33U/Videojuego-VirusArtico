@@ -12,7 +12,9 @@ public class LevelSelector : MonoBehaviour
     public Button botonNivel1; // Botón para el nivel 1
     public Button botonNivel2; // Botón para el nivel 2
 
-    private const string FilePath = "Assets/Data/players.json"; // Ruta al archivo JSON
+    private const string CurrentPlayerPath = "Assets/Data/JugadorActual.json"; // Ruta al archivo del jugador actual
+    private const string PlayersPath = "Assets/Data/players.json"; // Ruta al archivo de todos los jugadores
+
     private Player currentPlayer; // Jugador actual
 
     void Start()
@@ -24,78 +26,162 @@ public class LevelSelector : MonoBehaviour
         UpdateLevel2Assets();
     }
 
-    // Función pública para cargar la escena Nivel1
     public void LoadNivel1()
     {
-        Debug.Log("Clic en el botón de Nivel 1"); // Log cuando se hace clic en el botón de Nivel 1
+        Debug.Log("Clic en el botón de Nivel 1");
+
+        if (currentPlayer != null)
+        {
+            // Actualizar el valor de vidajugador a 3
+            currentPlayer.vidajugador = 3;
+
+            // Guardar los datos actualizados del jugador
+            SaveCurrentPlayer();
+            Debug.Log("Jugador actualizado con vidajugador = 3 antes de cargar Nivel1.");
+        }
+
+        // Cambiar a la escena Nivel1
         SceneManager.LoadScene("Nivel1");
     }
 
-    // Función pública para cargar la escena Nivel2
     public void LoadNivel2()
     {
-        Debug.Log("Clic en el botón de Nivel 2"); // Log cuando se hace clic en el botón de Nivel 2
+        Debug.Log("Clic en el botón de Nivel 2");
+
+        if (currentPlayer != null)
+        {
+            // Actualizar el valor de vidajugador a 3
+            currentPlayer.vidajugador = 3;
+
+            // Guardar los datos actualizados del jugador
+            SaveCurrentPlayer();
+            Debug.Log("Jugador actualizado con vidajugador = 3 antes de cargar Nivel2.");
+        }
+
+        // Cambiar a la escena Nivel2
         SceneManager.LoadScene("Nivel2");
     }
 
-    void LoadCurrentPlayer()
+    private void LoadCurrentPlayer()
     {
-        // Asegurarse de que el archivo JSON exista
-        if (File.Exists(FilePath))
+        // Cargar el jugador actual desde el archivo JugadorActual.json
+        if (File.Exists(CurrentPlayerPath))
         {
             try
             {
-                // Leer y deserializar la lista de jugadores
-                string json = File.ReadAllText(FilePath);
-                List<Player> playersList = JsonConvert.DeserializeObject<List<Player>>(json);
+                string json = File.ReadAllText(CurrentPlayerPath);
+                currentPlayer = JsonConvert.DeserializeObject<Player>(json);
 
-                // Obtener al jugador actual (en este caso, el último registrado)
-                if (playersList != null && playersList.Count > 0)
+                if (currentPlayer != null)
                 {
-                    currentPlayer = playersList[playersList.Count - 1];
                     Debug.Log($"Jugador actual cargado: {currentPlayer.nombre}");
                 }
                 else
                 {
-                    Debug.LogWarning("No se encontró ningún jugador en el archivo.");
+                    Debug.LogWarning("No se pudo deserializar el jugador actual.");
                 }
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"Error al cargar los datos del archivo JSON: {ex.Message}");
+                Debug.LogError($"Error al cargar el jugador actual: {ex.Message}");
             }
         }
         else
         {
-            Debug.LogWarning("El archivo de jugadores no existe.");
+            Debug.LogWarning($"El archivo {CurrentPlayerPath} no existe.");
         }
     }
 
-    void UpdateLevel2Assets()
+    private void UpdateLevel2Assets()
     {
         if (currentPlayer != null)
         {
             if (currentPlayer.nivel1)
             {
                 // Si el nivel 1 está completado, habilitar el nivel 2
-                nivel2CompletoAsset.SetActive(true); // Mostrar el asset del nivel 2 completado
-                nivel2SinCompletarAsset.SetActive(false); // Ocultar el asset de nivel 2 sin completar
-                botonNivel2.interactable = true; // Habilitar el botón de nivel 2
+                nivel2CompletoAsset.SetActive(true);
+                nivel2SinCompletarAsset.SetActive(false);
+                botonNivel2.interactable = true;
             }
             else
             {
                 // Si el nivel 1 no está completado, deshabilitar el nivel 2
-                nivel2CompletoAsset.SetActive(false); // Ocultar el asset del nivel 2 completado
-                nivel2SinCompletarAsset.SetActive(true); // Mostrar el asset de nivel 2 sin completar
-                botonNivel2.interactable = false; // Deshabilitar el botón de nivel 2
+                nivel2CompletoAsset.SetActive(false);
+                nivel2SinCompletarAsset.SetActive(true);
+                botonNivel2.interactable = false;
             }
         }
         else
         {
-            // Si no hay jugador cargado, deshabilitar el acceso al nivel 2
             nivel2CompletoAsset.SetActive(false);
             nivel2SinCompletarAsset.SetActive(true);
             botonNivel2.interactable = false;
+        }
+    }
+
+    private void SaveCurrentPlayer()
+    {
+        if (currentPlayer != null)
+        {
+            try
+            {
+                // Guardar el jugador actual en JugadorActual.json
+                string currentPlayerJson = JsonConvert.SerializeObject(currentPlayer, Formatting.Indented);
+                File.WriteAllText(CurrentPlayerPath, currentPlayerJson);
+
+                Debug.Log("Datos del jugador actual guardados correctamente.");
+
+                // También actualizar el archivo players.json
+                SavePlayerInPlayersFile();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Error al guardar el jugador actual: {ex.Message}");
+            }
+        }
+    }
+
+    private void SavePlayerInPlayersFile()
+    {
+        try
+        {
+            // Leer la lista de jugadores existente
+            List<Player> playersList = new List<Player>();
+
+            if (File.Exists(PlayersPath))
+            {
+                string playersJson = File.ReadAllText(PlayersPath);
+                playersList = JsonConvert.DeserializeObject<List<Player>>(playersJson) ?? new List<Player>();
+            }
+
+            // Buscar al jugador actual en la lista
+            bool playerFound = false;
+
+            for (int i = 0; i < playersList.Count; i++)
+            {
+                if (playersList[i].id == currentPlayer.id)
+                {
+                    playersList[i] = currentPlayer; // Actualizar el jugador
+                    playerFound = true;
+                    break;
+                }
+            }
+
+            // Si el jugador no estaba en la lista, agregarlo
+            if (!playerFound)
+            {
+                playersList.Add(currentPlayer);
+            }
+
+            // Guardar la lista actualizada en players.json
+            string updatedPlayersJson = JsonConvert.SerializeObject(playersList, Formatting.Indented);
+            File.WriteAllText(PlayersPath, updatedPlayersJson);
+
+            Debug.Log("Lista de jugadores actualizada correctamente.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error al actualizar la lista de jugadores: {ex.Message}");
         }
     }
 }

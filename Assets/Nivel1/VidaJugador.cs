@@ -9,7 +9,8 @@ public class VidaJugador : MonoBehaviour
     public Image ImageVida1;      // Imagen de la primera vida
     public Image ImageVida2;      // Imagen de la segunda vida
     public Image ImageVida3;      // Imagen de la tercera vida
-    private string dataPath = "Assets/Data/players.json"; // Ruta al archivo JSON
+    private string dataPathPlayers = "Assets/Data/players.json"; // Ruta al archivo JSON
+    private string dataPathJugadorActual = "Assets/Data/JugadorActual.json"; // Ruta al archivo JSON de JugadorActual
 
     void Start()
     {
@@ -35,20 +36,14 @@ public class VidaJugador : MonoBehaviour
     // Método para cargar los datos del jugador actual
     private void LoadCurrentPlayer()
     {
-        if (File.Exists(dataPath))
+        if (File.Exists(dataPathJugadorActual))
         {
-            string json = File.ReadAllText(dataPath);
-            var players = JsonConvert.DeserializeObject<Player[]>(json);
-
-            // Buscar al jugador actual (por ejemplo, el que está en nivel1)
-            if (players != null)
-            {
-                currentPlayer = System.Array.Find(players, player => player.nivel1);
-            }
+            string json = File.ReadAllText(dataPathJugadorActual);
+            currentPlayer = JsonConvert.DeserializeObject<Player>(json);
         }
         else
         {
-            Debug.LogError($"El archivo JSON no existe en la ruta: {dataPath}");
+            Debug.LogError($"El archivo JSON no existe en la ruta: {dataPathJugadorActual}");
         }
     }
 
@@ -59,10 +54,13 @@ public class VidaJugador : MonoBehaviour
         {
             currentPlayer.vidajugador = vida;
 
-            // Guardar los cambios en el archivo JSON
-            if (File.Exists(dataPath))
+            // Guardar los cambios en el archivo JSON de JugadorActual
+            File.WriteAllText(dataPathJugadorActual, JsonConvert.SerializeObject(currentPlayer, Formatting.Indented));
+
+            // También actualizar los datos en players.json
+            if (File.Exists(dataPathPlayers))
             {
-                string json = File.ReadAllText(dataPath);
+                string json = File.ReadAllText(dataPathPlayers);
                 var players = JsonConvert.DeserializeObject<Player[]>(json);
 
                 if (players != null)
@@ -76,8 +74,8 @@ public class VidaJugador : MonoBehaviour
                         }
                     }
 
-                    // Guardar los datos actualizados en el archivo JSON
-                    File.WriteAllText(dataPath, JsonConvert.SerializeObject(players, Formatting.Indented));
+                    // Guardar los datos actualizados en el archivo JSON de players.json
+                    File.WriteAllText(dataPathPlayers, JsonConvert.SerializeObject(players, Formatting.Indented));
                 }
             }
         }

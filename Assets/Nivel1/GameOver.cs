@@ -1,8 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Importar SceneManagement para cargar escenas
-using UnityEngine.UI; // Importar UI para trabajar con botones
-using System.IO; // Importar para trabajar con archivos
-using Newtonsoft.Json; // Importar para trabajar con JSON
+using UnityEngine.SceneManagement; // Para cargar escenas
+using UnityEngine.UI; // Para trabajar con botones
+using System.IO; // Para trabajar con archivos
+using Newtonsoft.Json; // Para trabajar con JSON
 
 public class GameOverScript : MonoBehaviour
 {
@@ -10,7 +10,8 @@ public class GameOverScript : MonoBehaviour
     public Button ButtonSalir;      // Referencia al botón de salir
     public GameObject CanvasGameOver; // Referencia al Canvas del GameOver
 
-    private string filePath = "Assets/Data/players.json"; // Ruta del archivo JSON
+    private const string PlayersFilePath = "Assets/Data/players.json"; // Ruta del archivo de jugadores
+    private const string CurrentPlayerFilePath = "Assets/Data/JugadorActual.json"; // Ruta del archivo del jugador actual
     private Player currentPlayer; // Jugador actual
 
     void Start()
@@ -23,26 +24,33 @@ public class GameOverScript : MonoBehaviour
         LoadCurrentPlayer();
     }
 
-    // Método para cargar los datos del jugador actual
+    // Método para cargar los datos del jugador actual desde JugadorActual.json
     private void LoadCurrentPlayer()
     {
-        // Leer el archivo JSON
-        string json = File.ReadAllText(filePath);
-
-        // Convertir el JSON a una lista de jugadores
-        Player[] players = JsonConvert.DeserializeObject<Player[]>(json);
-
-        // Encontrar al jugador actual (por nombre o cualquier otro criterio)
-        // Aquí, puedes cambiar el criterio de búsqueda según tus necesidades
-        currentPlayer = System.Array.Find(players, player => player.nombre == "Fernando");
-
-        if (currentPlayer != null)
+        if (File.Exists(CurrentPlayerFilePath))
         {
-            Debug.Log("Jugador cargado: " + currentPlayer.nombre);
+            try
+            {
+                string json = File.ReadAllText(CurrentPlayerFilePath);
+                currentPlayer = JsonConvert.DeserializeObject<Player>(json);
+
+                if (currentPlayer != null)
+                {
+                    Debug.Log("Jugador cargado desde JugadorActual.json: " + currentPlayer.nombre);
+                }
+                else
+                {
+                    Debug.LogError("No se pudo deserializar el jugador actual.");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError("Error al cargar JugadorActual.json: " + ex.Message);
+            }
         }
         else
         {
-            Debug.LogError("Jugador no encontrado");
+            Debug.LogError("Archivo JugadorActual.json no encontrado.");
         }
     }
 
@@ -54,33 +62,71 @@ public class GameOverScript : MonoBehaviour
             // Actualizar el valor de vidajugador a 3
             currentPlayer.vidajugador = 3;
 
-            // Leer el archivo JSON
-            string json = File.ReadAllText(filePath);
+            // Actualizar JugadorActual.json
+            SaveCurrentPlayer();
 
-            // Convertir el JSON a una lista de jugadores
-            Player[] players = JsonConvert.DeserializeObject<Player[]>(json);
+            // Actualizar players.json
+            UpdatePlayerInList();
 
-            // Buscar y actualizar el jugador en la lista
-            for (int i = 0; i < players.Length; i++)
-            {
-                if (players[i].nombre == currentPlayer.nombre)
-                {
-                    players[i] = currentPlayer;
-                    break;
-                }
-            }
-
-            // Convertir nuevamente la lista de jugadores a JSON
-            string updatedJson = JsonConvert.SerializeObject(players, Formatting.Indented);
-
-            // Guardar el archivo JSON actualizado
-            File.WriteAllText(filePath, updatedJson);
-
-            Debug.Log("Datos del jugador actualizados");
+            Debug.Log("Datos del jugador actualizados.");
         }
 
         // Llamar a la función para reiniciar la escena después de actualizar los datos
         ReloadScene();
+    }
+
+    // Método para guardar los datos actualizados del jugador actual en JugadorActual.json
+    private void SaveCurrentPlayer()
+    {
+        try
+        {
+            string json = JsonConvert.SerializeObject(currentPlayer, Formatting.Indented);
+
+            File.WriteAllText(CurrentPlayerFilePath, json);
+
+            Debug.Log("JugadorActual.json actualizado.");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("Error al actualizar JugadorActual.json: " + ex.Message);
+        }
+    }
+
+    // Método para actualizar los datos del jugador actual en players.json
+    private void UpdatePlayerInList()
+    {
+        if (File.Exists(PlayersFilePath))
+        {
+            try
+            {
+                string json = File.ReadAllText(PlayersFilePath);
+                Player[] players = JsonConvert.DeserializeObject<Player[]>(json);
+
+                // Buscar y actualizar al jugador en la lista
+                for (int i = 0; i < players.Length; i++)
+                {
+                    if (players[i].id == currentPlayer.id) // Comparar por ID único
+                    {
+                        players[i] = currentPlayer;
+                        break;
+                    }
+                }
+
+                // Guardar la lista actualizada en players.json
+                string updatedJson = JsonConvert.SerializeObject(players, Formatting.Indented);
+                File.WriteAllText(PlayersFilePath, updatedJson);
+
+                Debug.Log("Players.json actualizado.");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError("Error al actualizar Players.json: " + ex.Message);
+            }
+        }
+        else
+        {
+            Debug.LogError("Archivo Players.json no encontrado.");
+        }
     }
 
     // Método para reiniciar la escena actual
@@ -97,9 +143,26 @@ public class GameOverScript : MonoBehaviour
     }
 
     // Método para ir al menú de niveles
-    private void GoToMenuNiveles()
+  // Método para ir al menú de niveles
+private void GoToMenuNiveles()
+{
+    // Asegurarse de que el jugador actual esté cargado antes de modificarlo
+    if (currentPlayer != null)
     {
-        // Cargar la escena del menú de niveles
-        SceneManager.LoadScene("MenuNiveles"); // Asegúrate de que el nombre de la escena sea correcto
+        // Actualizar el valor de vidajugador a 3
+        currentPlayer.vidajugador = 3;
+
+        // Guardar los datos actualizados del jugador actual en JugadorActual.json
+        SaveCurrentPlayer();
+
+        // Actualizar los datos del jugador en players.json
+        UpdatePlayerInList();
+
+        Debug.Log("Valor de vidajugador actualizado a 3.");
     }
+
+    // Cargar la escena del menú de niveles
+    SceneManager.LoadScene("MenuNiveles"); // Asegúrate de que el nombre de la escena sea correcto
+}
+
 }
