@@ -1,11 +1,11 @@
 [
   {
     "nombre": "Fernando",
-    "score": 0,
-    "nivel1": false,
+    "score": 170,
+    "nivel1": true,
     "nivel2": false,
     "personajeAsset": "player1",
-    "vidajugador": 0
+    "vidajugador": 3
   },
   {
     "nombre": "Jesus",
@@ -13,6 +13,30 @@
     "nivel1": false,
     "nivel2": false,
     "personajeAsset": "player1",
+    "vidajugador": 0
+  },
+  {
+    "nombre": "Fernando",
+    "score": 0,
+    "nivel1": true,
+    "nivel2": false,
+    "personajeAsset": "player2",
+    "vidajugador": 0
+  },
+  {
+    "nombre": "Fatima",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": false,
+    "personajeAsset": "player1",
+    "vidajugador": 0
+  },
+  {
+    "nombre": "pepe",
+    "score": 0,
+    "nivel1": false,
+    "nivel2": false,
+    "personajeAsset": "player2",
     "vidajugador": 0
   }
 ]
