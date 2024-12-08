@@ -1,47 +1,20 @@
 [
   {
-    "id": "d2855d94-cbbe-4e34-b194-e85736f4ad08",
-    "nombre": "fernandog",
-    "score": 40,
+    "id": "cd6df510-32fc-4a68-bdfa-aa92c5770f8f",
+    "nombre": "Fernando",
+    "score": 160,
     "nivel1": false,
     "nivel2": false,
-    "personajeAsset": "player2",
+    "personajeAsset": "player1",
     "vidajugador": 3
   },
   {
-    "id": "47ab2a7f-786b-4258-bada-1b36078ccc0f",
+    "id": "77574748-bd77-486c-8fdd-56abd9b4c3d7",
     "nombre": "Jesus",
-    "score": 10,
-    "nivel1": false,
-    "nivel2": false,
-    "personajeAsset": "player1",
-    "vidajugador": 3
-  },
-  {
-    "id": "7033b541-fc0f-42a0-a2fc-9b50c23a2c15",
-    "nombre": "FFGP33",
-    "score": 0,
-    "nivel1": false,
-    "nivel2": false,
-    "personajeAsset": "player1",
-    "vidajugador": 3
-  },
-  {
-    "id": "c3da0381-65db-4927-89f9-8299dcf7dbb3",
-    "nombre": "PruebaNivel",
-    "score": 0,
-    "nivel1": false,
-    "nivel2": false,
-    "personajeAsset": "player1",
-    "vidajugador": 3
-  },
-  {
-    "id": "e37cd707-96f0-456f-9d4a-2a94580e2829",
-    "nombre": "pepe",
-    "score": 0,
-    "nivel1": false,
+    "score": 40,
+    "nivel1": true,
     "nivel2": false,
     "personajeAsset": "player2",
-    "vidajugador": 2
+    "vidajugador": 3
   }
 ]

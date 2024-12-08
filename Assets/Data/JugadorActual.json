@@ -1,9 +1,9 @@
 {
-  "id": "e37cd707-96f0-456f-9d4a-2a94580e2829",
-  "nombre": "pepe",
-  "score": 0,
-  "nivel1": false,
+  "id": "77574748-bd77-486c-8fdd-56abd9b4c3d7",
+  "nombre": "Jesus",
+  "score": 40,
+  "nivel1": true,
   "nivel2": false,
   "personajeAsset": "player2",
-  "vidajugador": 2
+  "vidajugador": 3
 }
