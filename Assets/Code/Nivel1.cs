@@ -13,6 +13,7 @@ public class Nivel1 : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1;
         // Cargar jugadores y gestionar los personajes
         LoadPlayersAndSetCharacter();
     }

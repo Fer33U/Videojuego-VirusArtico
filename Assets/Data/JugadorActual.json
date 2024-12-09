@@ -1,9 +1,9 @@
 {
-  "id": "77574748-bd77-486c-8fdd-56abd9b4c3d7",
-  "nombre": "Jesus",
-  "score": 40,
-  "nivel1": true,
-  "nivel2": false,
+  "id": "c22a1d75-fd8d-475c-bfa1-e656a84efb96",
+  "nombre": "jose",
+  "score": -170,
+  "nivel1": false,
+  "nivel2": true,
   "personajeAsset": "player2",
   "vidajugador": 3
 }
